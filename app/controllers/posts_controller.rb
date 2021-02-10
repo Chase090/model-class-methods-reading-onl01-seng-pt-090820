@@ -1,7 +1,32 @@
 class PostsController < ApplicationController
+  # helper_method :params
+
 
   def index
-    @posts = Post.all
+    #* provide a list of authors to the view for the filter control
+    @authors = Authors.all
+
+    #* filter the @posts list based on user input
+    if !params[:author].blank? 
+      @posts = Post.by_author.(params[:author]) 
+    
+    elsif !params[:date].blank? 
+      #* if the input is not blank and if the input is eq to "Today"
+      #* @post then would be equal to Post where it was created greater or
+      #* equal to Time.zone.today.beginning_of_day
+      #* else @post would be Post.where its less that time.zone.today.beginning_of_day
+      if params[:date] == "Today" 
+        @posts = Post.from_today 
+      else 
+        @posts = Post.old_news
+      end
+
+    else
+      #* if no filters are applied, show all posts
+      @posts = Post.all    
+    end    
+  end
+
   end
 
   def show
